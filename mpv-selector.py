@@ -13,7 +13,7 @@ mpvPath = "/Program Files/MPV/"
 mpvExe = "mpv.exe"
 theCmdPre = ' --ytdl-format="'
 
-print ("Good qualities include:  a; audio; 720; 1080; 1440; 2560.")
+print ("Good qualities include:  a; audio; 720; 1080; 1440; 2160.")
 theQuality = input ("Which quality would you like?  ")
 theUrl = input ("Plese drop your URL here:  ")
 

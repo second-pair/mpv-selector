@@ -1,0 +1,6 @@
+.*.swp
+
+#  pyinstaller Files
+build
+bin
+__pycache__
