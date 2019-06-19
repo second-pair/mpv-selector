@@ -11,8 +11,10 @@ from subprocess import Popen
 
 mpvPath = "/Program Files/MPV/"
 mpvExe = "mpv.exe"
-theCmdPre = ' --ytdl-format="'
+ytdlExe = "youtube-dl.exe"
+dlLoc = ' -o "C:/Users/Blair/Videos/%(title)s.%(ext)s"'
 
+watchOrDl = input ("(w)atch or (d)ownload?  ")
 print ("Good qualities include:  a; audio; 720; 1080; 1440; 2160.")
 theQuality = input ("Which quality would you like?  ")
 theUrl = input ("Plese drop your URL here:  ")
@@ -24,5 +26,17 @@ elif theQuality == "":
 else:
 	theCmd = "bestvideo[height<=?" + theQuality + '][ext=?webm]+bestaudio/best" --cache=1048576 '
 
+if watchOrDl == "w":
+	theCmdPre = ' --ytdl-format="'
+	theWholeCmd = mpvPath + mpvExe + theCmdPre + theCmd + theUrl
+	
+elif watchOrDl == "d":
+	theCmdPre = ' --format="'
+	theWholeCmd = mpvPath + ytdlExe + dlLoc + theCmdPre + theCmd + theUrl
+
+else:
+	print ("Error")
+	exit (0)
+
 print ("Sure thing, boss.")
-Popen (mpvPath + mpvExe + theCmdPre + theCmd + theUrl)
+Popen (theWholeCmd)
