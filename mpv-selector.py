@@ -8,12 +8,14 @@
 #"C:\Program Files\MPV\mpv.exe" --ytdl-format="bestvideo[height<=?1080][ext=?webm]+bestaudio/best" --cache=1048576
 
 from subprocess import Popen
-from os import environ
-environ["HOME"] = "/Users/Blair"
+from os.path import expanduser
+homeDir = expanduser ("~")
+#from os import environ
+#environ["HOME"] = "/Users/Blair"
 
 mpvPath = "/Program Files/MPV/"
 commonCmds = "--netrc --all-subs --embed-subs "
-dlLocDefault = 'C:/Users/Blair/Videos/%(playlist_title)s'
+dlLocDefault = homeDir + '/Videos/%(playlist_title)s'
 fileName='/%(playlist_title)s-%(upload_date)s,%(playlist_index)s-%(title)s.%(ext)s'
 dlCmds1 = 'youtube-dl.exe -o "'
 dlCmds2 = '" --format="'
