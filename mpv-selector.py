@@ -13,7 +13,10 @@ environ["HOME"] = "/Users/Blair"
 
 mpvPath = "/Program Files/MPV/"
 commonCmds = "--netrc --all-subs --embed-subs "
-dlCmds = 'youtube-dl.exe -o "C:/Users/Blair/Videos/%(title)s.%(ext)s" --format="'
+dlLocDefault = 'C:/Users/Blair/Videos/%(playlist_title)s'
+fileName='/%(playlist_title)s-%(upload_date)s,%(playlist_index)s-%(title)s.%(ext)s'
+dlCmds1 = 'youtube-dl.exe -o "'
+dlCmds2 = '" --format="'
 noDlCmds = 'mpv.exe --ytdl-format="'
 
 watchOrDl = input ("(w)atch or (d)ownload?  ")
@@ -30,9 +33,12 @@ else:
 
 if watchOrDl == "w":
 	specCmds = noDlCmds
-	
+
 elif watchOrDl == "d":
-	specCmds = dlCmds
+	dlLoc = input ("Where do you want to save this?  (Leave blank for default.)  ")
+	if dlLoc == "":
+		dlLoc = dlLocDefault
+	specCmds = dlCmds1 + dlLoc + fileName + dlCmds2
 
 else:
 	print ("Error")
