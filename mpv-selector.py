@@ -20,11 +20,19 @@ fileName='/%(playlist_title)s-%(upload_date)s,%(playlist_index)s-%(title)s.%(ext
 dlCmds1 = 'youtube-dl.exe -o "'
 dlCmds2 = '" --format="'
 noDlCmds = 'mpv.exe --ytdl-format="'
+plStartPos = ""
 
 watchOrDl = input ("(w)atch or (d)ownload?  ")
 print ("Good qualities include:  a; audio; 720; 1080; 1440; 2160.")
 userQuality = input ("Which quality would you like?  ")
 theUrl = input ("Plese drop your URL here:  ")
+
+if theUrl .find ("list=") != -1:
+	#https://www.youtube.com/watch?v=oYSVMj2ItIA&list=PLV2ONwtymjs9rgivAxvpjODCy0ZuF0yFr&index=101&t=0s
+	#https://www.youtube.com/playlist?list=PLV2ONwtymjs9rgivAxvpjODCy0ZuF0yFr
+	pLStartPos = "--playlist-start %s " % input ("Where in the playlist would you like to start?  (Default is 1.)  ")
+	if pLStartPos == "--playlist-start 0":
+		pLStartPos = "--no-playlist"
 
 if userQuality == "audio" or userQuality == "a":
 	theQuality = 'bestaudio/best" '
@@ -47,6 +55,6 @@ else:
 	exit (0)
 
 print ("Sure thing, boss.")
-theWholeCmd = mpvPath + specCmds + theQuality + commonCmds + theUrl
+theWholeCmd = mpvPath + specCmds + theQuality + pLStartPos + commonCmds + theUrl
 print (theWholeCmd)
 Popen (theWholeCmd)
