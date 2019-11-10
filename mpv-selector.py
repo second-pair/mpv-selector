@@ -15,12 +15,12 @@ homeDir = expanduser ("~")
 
 mpvPath = "/Program Files/MPV/"
 commonCmds = "--netrc --all-subs --embed-subs "
-dlLocDefault = homeDir + '/Videos/%(playlist_title)s'
+dlLocDefault = homeDir + '/YTDL/%(playlist_title)s'
 fileName='/%(playlist_title)s-%(upload_date)s,%(playlist_index)s-%(title)s.%(ext)s'
 dlCmds1 = 'youtube-dl.exe -o "'
 dlCmds2 = '" --format="'
 noDlCmds = 'mpv.exe --ytdl-format="'
-plStartPos = ""
+pLStartPos = ""
 
 watchOrDl = input ("(w)atch or (d)ownload?  ")
 print ("Good qualities include:  a; audio; 720; 1080; 1440; 2160.")
@@ -30,9 +30,9 @@ theUrl = input ("Plese drop your URL here:  ")
 if theUrl .find ("list=") != -1:
 	#https://www.youtube.com/watch?v=oYSVMj2ItIA&list=PLV2ONwtymjs9rgivAxvpjODCy0ZuF0yFr&index=101&t=0s
 	#https://www.youtube.com/playlist?list=PLV2ONwtymjs9rgivAxvpjODCy0ZuF0yFr
-	pLStartPos = "--playlist-start %s " % input ("Where in the playlist would you like to start?  (Default is 1.)  ")
-	if pLStartPos == "--playlist-start 0":
-		pLStartPos = "--no-playlist"
+	pLStartPos = "--playlist-start %s " % input ("Where in the playlist would you like to start?  (Default is 1, use 0 for just this video.)  ")
+	if pLStartPos == "--playlist-start 0 ":
+		pLStartPos = "--no-playlist "
 
 if userQuality == "audio" or userQuality == "a":
 	theQuality = 'bestaudio/best" '
