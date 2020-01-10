@@ -14,11 +14,10 @@ homeDir = expanduser ("~")
 #environ["HOME"] = "/Users/Blair"
 
 mpvPath = "/Program Files/MPV/"
-commonCmds = "--netrc --all-subs --embed-subs "
 dlLocDefault = homeDir + '/YTDL/%(playlist_title)s'
-fileName='/%(playlist_title)s-%(upload_date)s,%(playlist_index)s-%(title)s.%(ext)s'
+fileName='/%(playlist_title)s-%(upload_date)s,%(playlist_index)s-%(title)s.%(ext)s"'
 dlCmds1 = 'youtube-dl.exe -o "'
-dlCmds2 = '" --format="'
+dlCmds2 = ' --netrc --all-subs --embed-subs --format="'
 noDlCmds = 'mpv.exe --ytdl-format="'
 pLStartPos = ""
 
@@ -55,6 +54,6 @@ else:
 	exit (0)
 
 print ("Sure thing, boss.")
-theWholeCmd = mpvPath + specCmds + theQuality + pLStartPos + commonCmds + theUrl
+theWholeCmd = mpvPath + specCmds + theQuality + pLStartPos + theUrl
 print (theWholeCmd)
 Popen (theWholeCmd)
