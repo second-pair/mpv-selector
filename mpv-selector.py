@@ -16,7 +16,7 @@ homeDir = expanduser ("~")
 mpvPath = "/Program Files/MPV/"
 dlLocDefault = homeDir + '/YTDL/%(playlist_title)s'
 fileName='/%(playlist_title)s-%(upload_date)s,%(playlist_index)s-%(title)s.%(ext)s"'
-dlCmds1 = 'youtube-dl.exe -o "'
+dlCmds1 = 'youtube-dl.exe -i -o "'
 dlCmds2 = ' --netrc --all-subs --embed-subs --format="'
 noDlCmds = 'mpv.exe --ytdl-format="'
 pLStartPos = ""
@@ -32,9 +32,11 @@ if theUrl .find ("list=") != -1:
 	pLStartPos = "--playlist-start %s " % input ("Where in the playlist would you like to start?  (Default is 1, use 0 for just this video.)  ")
 	if pLStartPos == "--playlist-start 0 ":
 		pLStartPos = "--no-playlist "
+	elif pLStartPos == "--playlist-start  ":
+		pLStartPos = "--playlist-start 1 "
 
 if userQuality == "audio" or userQuality == "a":
-	theQuality = 'bestaudio/best" '
+	theQuality = 'bestaudio[ext=m4a]/bestaudio/best" '
 elif userQuality == "":
 	theQuality = 'best" --cache=1048576 '
 else:
