@@ -1,4 +1,5 @@
 .*.swp
+youtube-dl.exe
 
 #  pyinstaller Files
 build
