@@ -24,6 +24,7 @@ dlCmds2 = ' --netrc --format="'
 dlCmdsSubs = ' --all-subs --sub-format srt --embed-subs'
 noDlCmds = 'mpv.exe --ytdl-format="'
 pLStartPos = ""
+cacheLimit = "100M"
 
 #  Function to update the local copy of YTDL.
 def updateYtdl ():
@@ -78,10 +79,10 @@ if userQuality == "audio" or userQuality == "a":
 	theQuality = 'bestaudio[ext=m4a]/bestaudio/best" '
 elif userQuality == "":
 	dlCmds2 = dlCmdsSubs + dlCmds2
-	theQuality = 'best" --cache=1048576 '
+	theQuality = 'best" --cache --demuxer-max-bytes=' + cacheLimit + ' '
 else:
 	dlCmds2 = dlCmdsSubs + dlCmds2
-	theQuality = "bestvideo[height<=?" + userQuality + '][ext=?webm]+bestaudio/best" --cache=1048576 '
+	theQuality = "bestvideo[height<=?" + userQuality + '][ext=?webm]+bestaudio/best" --cache --demuxer-max-bytes=' + cacheLimit + ' '
 
 #  User wants to stream it.
 if watchOrDl == "w":
