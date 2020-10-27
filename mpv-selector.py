@@ -8,21 +8,24 @@
 #  Imports
 from subprocess import Popen
 import urllib .request
-from os .path import expanduser
-from os .path import getmtime
+from os import path
+#from os .path import path .expanduser
+#from os .path import path .getmtime
 import time
 
 #  Variables
-homeDir = expanduser ("~")
+homeDir = path .expanduser ("~")
 ytdlDlUrl = "https://youtube-dl.org/downloads/latest/youtube-dl.exe"
 ytdlFile = "youtube-dl.exe"
+ytdlSigUrl = "https://yt-dl.org/downloads/latest/youtube-dl.sig"
 mpvPath = "/Program Files/MPV/"
+mpvFile = "mpv.exe"
 dlLocDefault = homeDir + '/YTDL/%(playlist_title)s'
 fileName='/%(playlist_title)s-%(upload_date)s,%(playlist_index)s-%(title)s.%(ext)s"'
-dlCmds1 = 'youtube-dl.exe -i -o "'
+dlCmds1 = ytdlFile + ' -i -o "'
 dlCmds2 = ' --netrc --format="'
 dlCmdsSubs = ' --all-subs --sub-format srt --embed-subs'
-noDlCmds = 'mpv.exe --ytdl-format="'
+noDlCmds = mpvFile +  ' --ytdl-format="'
 pLStartPos = ""
 cacheLimit = "100M"
 
@@ -33,28 +36,44 @@ def updateYtdl ():
 	if (dlObj .status == 200):
 		dlObjTime = time .gmtime (0)
 		dlFileTime = time .gmtime (0)
-		#  Grab the modification time of the remote file.
+		dlObjSize = 0
+		dlFileSize = 0
+		#  Grab the modification time and size of the remote file.
 		try:
 			dlObjTime = time .strptime (dlObj .headers ['Last-Modified'], "%a, %d %b %Y %H:%M:%S %Z")
+			dlObjSize = int (dlObj .headers ['Content-Length'])
 		except:
-			print ("Had trouble parsing the modification time of the remote file.  Time was:")
+			print ("Had trouble parsing the modification time or size of the remote file.  Time was:")
 			print (dlObj .headers ['Last-Modified'])
-		#  Grab the modification time of the local file.
+			print (dlObj .headers ['Content-Length'])
+		#  Grab the modification time and size of the local file.
 		try:
-			dlFileTime = time .gmtime (getmtime ("youtube-dl.exe"))
+			dlFileTime = time .gmtime (path .getmtime (ytdlFile))
+			dlFileSize = path .getsize (ytdlFile)
 		except:
 			dlFileTime = time .gmtime (0)
+			dlFileSize = 0
+
+		#  Start comparing.
+		print ("Local Stats :  date %s  size %d" % (time .strftime ("%Y-%m-%d_%H-%M-%S", dlFileTime), dlFileSize))
+		print ("Remote Stats:  date %s  size %d" % (time .strftime ("%Y-%m-%d_%H-%M-%S", dlObjTime), dlObjSize))
 		if (dlObjTime > dlFileTime):
-			try:
-				print ("Updating local 'youtube-dl.exe' programme...")
-				dlFile = open (ytdlFile, 'wb')
-				dlFile .write (dlObj .read ())
-				dlFile .close ()
-				print ("'youtube-dl.exe' updated.")
-			except:
-				print ("ERROR:  Couldn't open %s in 'wb'!  Trying the download from YT anyway..." % ytdlFile)
+			print ("Newer version available, updating local 'youtube-dl.exe' programme...")
+		elif (dlFileSize < 1000):
+			print ("Local file is very small (< 1000 bytes)!  Grabbing a new version.")
+		elif (dlFileSize != dlObjSize):
+			print ("Local and remote files are different sizes!  Grabbing the remote one, since it may still be newer (local could have been `touch`ed, for example).")
 		else:
 			print ("No update needed.  Continuing...")
+			return
+		#  Perform the update.
+		try:
+			dlFile = open (ytdlFile, 'wb')
+			dlFile .write (dlObj .read ())
+			dlFile .close ()
+		except:
+			print ("ERROR:  Couldn't open %s in 'wb'!  Trying the download from YT anyway..." % ytdlFile)
+		print ("'youtube-dl.exe' updated.")
 	else:
 		print ("ERROR:  Bad response from the URL (%s)!  Trying the download from YT anyway..." % dlObj .status)
 
