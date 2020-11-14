@@ -32,50 +32,57 @@ cacheLimit = "100M"
 #  Function to update the local copy of YTDL.
 def updateYtdl ():
 	#  First check if we're out-of-date and try to download a new copy of youtube-dl if needed.
-	dlObj = urllib .request .urlopen (ytdlDlUrl)
-	if (dlObj .status == 200):
-		dlObjTime = time .gmtime (0)
-		dlFileTime = time .gmtime (0)
-		dlObjSize = 0
-		dlFileSize = 0
-		#  Grab the modification time and size of the remote file.
-		try:
-			dlObjTime = time .strptime (dlObj .headers ['Last-Modified'], "%a, %d %b %Y %H:%M:%S %Z")
-			dlObjSize = int (dlObj .headers ['Content-Length'])
-		except:
-			print ("Had trouble parsing the modification time or size of the remote file.  Time was:")
-			print (dlObj .headers ['Last-Modified'])
-			print (dlObj .headers ['Content-Length'])
-		#  Grab the modification time and size of the local file.
-		try:
-			dlFileTime = time .gmtime (path .getmtime (ytdlFile))
-			dlFileSize = path .getsize (ytdlFile)
-		except:
+	try:
+		dlObj = urllib .request .urlopen (ytdlDlUrl)
+		if (dlObj .status == 200):
+			dlObjTime = time .gmtime (0)
 			dlFileTime = time .gmtime (0)
+			dlObjSize = 0
 			dlFileSize = 0
+			#  Grab the modification time and size of the remote file.
+			try:
+				dlObjTime = time .strptime (dlObj .headers ['Last-Modified'], "%a, %d %b %Y %H:%M:%S %Z")
+				dlObjSize = int (dlObj .headers ['Content-Length'])
+			except:
+				print ("Had trouble parsing the modification time or size of the remote file.  Time was:")
+				print (dlObj .headers ['Last-Modified'])
+				print (dlObj .headers ['Content-Length'])
+			#  Grab the modification time and size of the local file.
+			try:
+				dlFileTime = time .gmtime (path .getmtime (ytdlFile))
+				dlFileSize = path .getsize (ytdlFile)
+			except:
+				dlFileTime = time .gmtime (0)
+				dlFileSize = 0
 
-		#  Start comparing.
-		print ("Local Stats :  date %s  size %d" % (time .strftime ("%Y-%m-%d_%H-%M-%S", dlFileTime), dlFileSize))
-		print ("Remote Stats:  date %s  size %d" % (time .strftime ("%Y-%m-%d_%H-%M-%S", dlObjTime), dlObjSize))
-		if (dlObjTime > dlFileTime):
-			print ("Newer version available, updating local 'youtube-dl.exe' programme...")
-		elif (dlFileSize < 1000):
-			print ("Local file is very small (< 1000 bytes)!  Grabbing a new version.")
-		elif (dlFileSize != dlObjSize):
-			print ("Local and remote files are different sizes!  Grabbing the remote one, since it may still be newer (local could have been `touch`ed, for example).")
+			#  Start comparing.
+			print ("Local Stats :  date %s  size %d" % (time .strftime ("%Y-%m-%d_%H-%M-%S", dlFileTime), dlFileSize))
+			print ("Remote Stats:  date %s  size %d" % (time .strftime ("%Y-%m-%d_%H-%M-%S", dlObjTime), dlObjSize))
+			if (dlObjTime > dlFileTime):
+				print ("Newer version available, updating local 'youtube-dl.exe' programme...")
+			elif (dlFileSize < 1000):
+				print ("Local file is very small (< 1000 bytes)!  Grabbing a new version.")
+			elif (dlFileSize != dlObjSize):
+				print ("Local and remote files are different sizes!  Grabbing the remote one, since it may still be newer (local could have been `touch`ed, for example).")
+			else:
+				print ("No update needed.  Continuing...")
+				return
+			#  Perform the update.
+			try:
+				dlFile = open (ytdlFile, 'wb')
+				dlFile .write (dlObj .read ())
+				dlFile .close ()
+			except:
+				print ("ERROR:  Couldn't open %s in 'wb'!  Trying the download from YT anyway..." % ytdlFile)
+			print ("'youtube-dl.exe' updated.")
 		else:
-			print ("No update needed.  Continuing...")
-			return
-		#  Perform the update.
-		try:
-			dlFile = open (ytdlFile, 'wb')
-			dlFile .write (dlObj .read ())
-			dlFile .close ()
-		except:
-			print ("ERROR:  Couldn't open %s in 'wb'!  Trying the download from YT anyway..." % ytdlFile)
-		print ("'youtube-dl.exe' updated.")
-	else:
-		print ("ERROR:  Bad response from the URL (%s)!  Trying the download from YT anyway..." % dlObj .status)
+			print ("ERROR:  Bad response from the URL (%s)!  Trying the download from YT anyway..." % dlObj .status)
+	except urllib .error .URLError as exception:
+		print ("ERROR:  Issue with the URL (%s)!  Trying the download from YT anyway..." % exception)
+	except urllib .error .HTTPError as exception:
+		print ("ERROR:  Bad response from the URL (%s)!  Trying the download from YT anyway..." % exception)
+	except:
+		print ("ERROR:  Bad response from the URL (not sure what)!  Trying the download from YT anyway...")
 
 
 #  Find out what the user wants.
