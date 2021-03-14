@@ -5,6 +5,9 @@
 #  Simple script to wrap MPV, to make specifying YT-DLs easier.
 #  This script doesn't have any runtime dependencies that aren't included with Python.  Other than that, I'm not 100% sure.
 
+#  TODO:  Auto-update MPV.
+#--script-opts=ytdl_hook-ytdl_path=/custom/path/youtube-dl
+
 #  Imports
 from subprocess import Popen
 import urllib .request
@@ -15,17 +18,24 @@ import time
 
 #  Variables
 homeDir = path .expanduser ("~")
-ytdlDlUrl = "https://youtube-dl.org/downloads/latest/youtube-dl.exe"
+#  Youtube DL
+ytdlFolder = "./"
 ytdlFile = "youtube-dl.exe"
+ytdlPath = ytdlFolder + ytdlFile
+ytdlDlUrl = "https://youtube-dl.org/downloads/latest/youtube-dl.exe"
 ytdlSigUrl = "https://yt-dl.org/downloads/latest/youtube-dl.sig"
-mpvPath = "/Program Files/MPV/"
+#  MPV
+mpvFolder = "./mpv/"
 mpvFile = "mpv.exe"
+mpvPath = mpvFolder + mpvFile
+#https://sourceforge.net/projects/mpv-player-windows/files/64bit/
+#  Video Options
 dlLocDefault = homeDir + '/YTDL/%(playlist_title)s'
 fileName='/%(playlist_title)s-%(upload_date)s,%(playlist_index)s-%(title)s.%(ext)s"'
-dlCmds1 = ytdlFile + ' -i -o "'
+dlCmds1 = ytdlPath + ' -i -o "'
 dlCmds2 = ' --netrc --format="'
 dlCmdsSubs = ' --all-subs --sub-format srt --embed-subs'
-noDlCmds = mpvFile +  ' --ytdl-format="'
+noDlCmds = mpvPath + ' --script-opts=ytdl_hook-ytdl_path=' + ytdlPath + ' --ytdl-format="'
 pLStartPos = ""
 cacheLimit = "100M"
 
@@ -49,8 +59,8 @@ def updateYtdl ():
 				print (dlObj .headers ['Content-Length'])
 			#  Grab the modification time and size of the local file.
 			try:
-				dlFileTime = time .gmtime (path .getmtime (ytdlFile))
-				dlFileSize = path .getsize (ytdlFile)
+				dlFileTime = time .gmtime (path .getmtime (ytdlPath))
+				dlFileSize = path .getsize (ytdlPath)
 			except:
 				dlFileTime = time .gmtime (0)
 				dlFileSize = 0
@@ -69,11 +79,11 @@ def updateYtdl ():
 				return
 			#  Perform the update.
 			try:
-				dlFile = open (ytdlFile, 'wb')
+				dlFile = open (ytdlPath, 'wb')
 				dlFile .write (dlObj .read ())
 				dlFile .close ()
 			except:
-				print ("ERROR:  Couldn't open %s in 'wb'!  Trying the download from YT anyway..." % ytdlFile)
+				print ("ERROR:  Couldn't open %s in 'wb'!  Trying the download from YT anyway..." % ytdlPath)
 			print ("'youtube-dl.exe' updated.")
 		else:
 			print ("ERROR:  Bad response from the URL (%s)!  Trying the download from YT anyway..." % dlObj .status)
@@ -112,7 +122,7 @@ else:
 
 #  User wants to stream it.
 if watchOrDl == "w":
-	specCmds = mpvPath + noDlCmds
+	specCmds = noDlCmds
 
 #  User wants to download it.
 elif watchOrDl == "d":
