@@ -4,4 +4,5 @@ youtube-dl.exe
 #  pyinstaller Files
 build
 bin
+mpv
 __pycache__

@@ -5,11 +5,11 @@
 #  Simple script to wrap MPV, to make specifying YT-DLs easier.
 #  This script doesn't have any runtime dependencies that aren't included with Python.  Other than that, I'm not 100% sure.
 
-#  TODO:  Auto-update MPV.
+#  TODO:  Automatically keep MPV up-to-date.  Work out how to include the local MPV in Git.
 #--script-opts=ytdl_hook-ytdl_path=/custom/path/youtube-dl
 
 #  Imports
-from subprocess import Popen
+from subprocess import run
 import urllib .request
 from os import path
 #from os .path import path .expanduser
@@ -18,6 +18,7 @@ import time
 
 #  Variables
 homeDir = path .expanduser ("~")
+validWatchOrDl = ('w', 'd', 'wh', 'dh')
 #  Youtube DL
 ytdlFolder = "./"
 ytdlFile = "youtube-dl.exe"
@@ -96,10 +97,14 @@ def updateYtdl ():
 
 
 #  Find out what the user wants.
-watchOrDl = input ("(w)atch or (d)ownload?  ")
+watchOrDl = ""
+while (not watchOrDl in validWatchOrDl):
+	watchOrDl = input ("(w)atch or (d)ownload?  Append 'h' to halt after execution.  ")
 print ("Good qualities include:  a; audio; 720; 1080; 1440; 2160.")
 userQuality = input ("Which quality would you like?  ")
-theUrl = input ("Plese drop your URL here:  ")
+theUrl = ""
+while (theUrl == ""):
+	theUrl = input ("Plese drop your URL here:  ")
 
 #  If this is a playlist, get extra playlist info from the user.
 if theUrl .find ("list=") != -1:
@@ -121,11 +126,11 @@ else:
 	theQuality = "bestvideo[height<=?" + userQuality + '][ext=?webm]+bestaudio/best" --cache --demuxer-max-bytes=' + cacheLimit + ' '
 
 #  User wants to stream it.
-if watchOrDl == "w":
+if (watchOrDl in ("w", "wh")):
 	specCmds = noDlCmds
 
 #  User wants to download it.
-elif watchOrDl == "d":
+elif (watchOrDl in ("d", "dh")):
 	dlLoc = input ("Where do you want to save this?  (Leave blank for default.)  ")
 	if dlLoc == "":
 		dlLoc = dlLocDefault
@@ -134,11 +139,17 @@ elif watchOrDl == "d":
 
 #  The hell did you just say to me??
 else:
-	print ("ERROR:  Please enter a valid command.")
+	print ("ERROR:  watchOrDl invalid - please report this.")
 	exit (0)
 
 #  Start thine engines.
 print ("Sure thing, boss.")
 theWholeCmd = specCmds + theQuality + pLStartPos + theUrl
 print (theWholeCmd)
-Popen (theWholeCmd)
+run (theWholeCmd)
+
+#  Finish up.
+if (len (watchOrDl) == 2 and watchOrDl [1] == 'h'):
+	input ("Donezo!  Press any key to exit.")
+else:
+	print ("Donezo!")
