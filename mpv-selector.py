@@ -107,10 +107,17 @@ while (theUrl == ""):
 	theUrl = input ("Plese drop your URL here:  ")
 
 #  If this is a playlist, get extra playlist info from the user.
-if theUrl .find ("list=") != -1:
-	pLStartPos = "--playlist-start %s " % input ("Where in the playlist would you like to start?  (Default is 1, use 0 for just this video.)  ")
+if (watchOrDl [0] == 'd') and (theUrl .find ("youtube.com") != -1) and (theUrl .find ("list=") != -1):
+	pLStartPos = "--playlist-start %s " % input ("Where in the playlist would you like to start?  (1 - default;  0 - just this;  -1 - this onward.)  ")
 	if pLStartPos == "--playlist-start 0 ":
 		pLStartPos = "--no-playlist "
+	elif pLStartPos == "--playlist-start -1 ":
+		indexIndex = theUrl .find ("index=")
+		nextAmpersandIndex = theUrl .find ("&", indexIndex)
+		if (nextAmpersandIndex == -1):
+			pLStartPos = "--playlist-start %s " % theUrl [indexIndex + 6:]
+		else:
+			pLStartPos = "--playlist-start %s " % theUrl [indexIndex + 6:nextAmpersandIndex]
 	elif pLStartPos == "--playlist-start  ":
 		pLStartPos = "--playlist-start 1 "
 
