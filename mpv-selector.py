@@ -5,8 +5,8 @@
 #  Simple script to wrap MPV, to make specifying YT-DLs easier.
 #  This script doesn't have any runtime dependencies that aren't included with Python.  Other than that, I'm not 100% sure.
 
-#  TODO:  Automatically keep MPV up-to-date.  Work out how to include the local MPV in Git.
-#--script-opts=ytdl_hook-ytdl_path=/custom/path/youtube-dl
+#  TODO:  Automatically keep MPV up-to-date.  Work out how to include the local MPV in Git.  Switch 'youtube-dl' -> 'yt-dlp'.
+#--script-opts=ytdl_hook-ytdl_path=/custom/path/yt-dlp
 
 #  Imports
 from subprocess import run
@@ -21,10 +21,12 @@ homeDir = path .expanduser ("~")
 validWatchOrDl = ('w', 'd', 'wh', 'dh')
 #  Youtube DL
 ytdlFolder = "./"
-ytdlFile = "youtube-dl.exe"
+ytdlFile = "yt-dlp.exe"
 ytdlPath = ytdlFolder + ytdlFile
-ytdlDlUrl = "https://youtube-dl.org/downloads/latest/youtube-dl.exe"
-ytdlSigUrl = "https://yt-dl.org/downloads/latest/youtube-dl.sig"
+#ytdlDlUrl = "https://youtube-dl.org/downloads/latest/youtube-dl.exe"
+#ytdlSigUrl = "https://yt-dl.org/downloads/latest/youtube-dl.sig"
+ytdlDlUrl = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
+ytdlSigUrl = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/SHA2-512SUMS"
 #  MPV
 mpvFolder = "./mpv/"
 mpvFile = "mpv.exe"
@@ -40,9 +42,13 @@ noDlCmds = mpvPath + ' --script-opts=ytdl_hook-ytdl_path=' + ytdlPath + ' --ytdl
 pLStartPos = ""
 cacheLimit = "100M"
 
-#  Function to update the local copy of YTDL.
+#  Function to retrieve the latest release URL of yt-dlp.
+def getYtDlUrl ():
+	pass
+
+#  Function to update the local copy of yt-dlp.
 def updateYtdl ():
-	#  First check if we're out-of-date and try to download a new copy of youtube-dl if needed.
+	#  First check if we're out-of-date and try to download a new copy of yt-dlp if needed.
 	try:
 		dlObj = urllib .request .urlopen (ytdlDlUrl)
 		if (dlObj .status == 200):
@@ -70,7 +76,7 @@ def updateYtdl ():
 			print ("Local Stats :  date %s  size %d" % (time .strftime ("%Y-%m-%d_%H-%M-%S", dlFileTime), dlFileSize))
 			print ("Remote Stats:  date %s  size %d" % (time .strftime ("%Y-%m-%d_%H-%M-%S", dlObjTime), dlObjSize))
 			if (dlObjTime > dlFileTime):
-				print ("Newer version available, updating local 'youtube-dl.exe' programme...")
+				print ("Newer version available, updating local 'yt-dlp.exe' programme...")
 			elif (dlFileSize < 1000):
 				print ("Local file is very small (< 1000 bytes)!  Grabbing a new version.")
 			elif (dlFileSize != dlObjSize):
@@ -85,7 +91,7 @@ def updateYtdl ():
 				dlFile .close ()
 			except:
 				print ("ERROR:  Couldn't open %s in 'wb'!  Trying the download from YT anyway..." % ytdlPath)
-			print ("'youtube-dl.exe' updated.")
+			print ("'yt-dlp.exe' updated.")
 		else:
 			print ("ERROR:  Bad response from the URL (%s)!  Trying the download from YT anyway..." % dlObj .status)
 	except urllib .error .URLError as exception:
